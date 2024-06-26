@@ -155,12 +155,14 @@ app.get("/api/dictionary/:language/:entry", (req, res, next) => {
       };
 
       // translation of the definition
+      let offset = 0;
       const definition = $(".def.ddef_d.db")
         .map((index, element) => {
           const parentPhraseBlock = $(element).closest(
             ".pr.phrase-block.dphrase-block",
           );
           if (parentPhraseBlock.length > 0) {
+            offset++;
             return;
           } else {
             return {
@@ -168,7 +170,7 @@ app.get("/api/dictionary/:language/:entry", (req, res, next) => {
               pos: defPos(element), // TODO: Implement defPos function
               source: source(element), // TODO: Implement source function
               text: $(element).text(),
-              translation: definitiontrans.eq(index).text(),
+              translation: definitiontrans.eq(index - offset).text(),
               example: example.slice(
                 exampleCount[index - 1],
                 exampleCount[index],
