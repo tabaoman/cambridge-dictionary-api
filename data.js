@@ -4,6 +4,7 @@ const express = require("express");
 const axios = require("axios");
 const app = express();
 const cors = require("cors");
+const fn = require("./fn");
 
 const fetchVerbs = (wiki) => {
   return new Promise((resolve, reject) => {
@@ -46,6 +47,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/dictionary/:language/:entry", (req, res, next) => {
+  const b64 = req.query.hasOwnProperty('b64');
   const entry = req.params.entry;
   const slugLanguage = req.params.language;
   let nation = "us";
@@ -101,7 +103,7 @@ app.get("/api/dictionary/:language/:entry", (req, res, next) => {
           if (!src) continue;
           const url = siteurl + $(src).attr('src');
           const pron = $(node.childNodes[2]).text();
-          audio.push({pos: p, lang: lang, url: url, pron: pron});
+          audio.push({pos: p, lang: lang, url: b64 ? await fn.a2b64(url) : url, pron: pron});
         }
       }
 
