@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/api/dictionary/:language/:entry", (req, res, next) => {
-  const b64 = req.query.hasOwnProperty('b64');
+  const b64 = req.query.hasOwnProperty('b') || req.query.hasOwnProperty('b64');
   const entry = req.params.entry;
   const slugLanguage = req.params.language;
   let nation = "us";
