@@ -58,17 +58,17 @@ app.get("/api/suggest/:dict/:word", (req, res) => {
 app.get("/api/dictionary/:dict/:word", async (req, res, next) => {
   const b64 = req.query.hasOwnProperty('b') || req.query.hasOwnProperty('b64');
   const entry = req.params.word;
-  const lang = fn.dict(req.params.dict);
-  const dict = req.params.dict === "uk" ? "uk" : "us";
+  const dict = fn.dict(req.params.dict);
+  const lang = req.params.dict === "uk" ? "uk" : "us";
 
   // Try cache
-  const cache = await fn.tryWordFile(dict, entry);
+  const cache = await fn.tryWordFile(fn.dictKey(req.params.dict), entry);
   if (cache) {
     res.status(200).json(fn.normResult(JSON.parse(cache), { b64 }));
     return;
   }
 
-  const url = `https://dictionary.cambridge.org/${dict}/dictionary/${lang}/${entry}`;
+  const url = `https://dictionary.cambridge.org/${lang}/dictionary/${dict}/${entry}`;
   request(url, async (error, response, html) => {
     if (!error && response.statusCode == 200) {
       const $ = cheerio.load(html);
@@ -101,14 +101,14 @@ app.get("/api/dictionary/:dict/:word", async (req, res, next) => {
         if (nodes.length === 0) continue;
         for (const node of nodes) {
           if (node.childNodes.length < 3) continue;
-          const lang = $(node.childNodes[0]).text();
+          const l = $(node.childNodes[0]).text();
           const aud = node.childNodes[1].childNodes.find(c => c.name === 'audio');
           if (!aud) continue;
           const src = aud.childNodes.find(c => c.name === 'source');
           if (!src) continue;
           const url = siteurl + $(src).attr('src');
           const pron = $(node.childNodes[2]).text();
-          audio.push({pos: p, lang: lang, base64: await fn.a2b64(url), url: url, pron: pron});
+          audio.push({pos: p, lang: l, base64: await fn.a2b64(url), url: url, pron: pron});
         }
       }
 
@@ -201,7 +201,7 @@ app.get("/api/dictionary/:dict/:word", async (req, res, next) => {
           pronunciation: audio,
           definition: definition,
         };
-        fn.saveWord(dict, word, JSON.stringify(json))
+        fn.saveWord(fn.dictKey(req.params.dict), word, JSON.stringify(json))
         res.status(200).json(fn.normResult(json, { b64 }));
       }
     }

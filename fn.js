@@ -21,6 +21,10 @@ const fn = {
   dict: (d) => {
     return dictMap[d] || "english";
   },
+  dictKey: (k) => {
+    if (dictMap[k]) return k;
+    return 'en';
+  },
   normResult: (res, param) => {
     if (param && param.b64) {
       res.pronunciation = res.pronunciation.map(p => {
