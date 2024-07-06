@@ -1,4 +1,5 @@
 .idea
 .vercel
 node_modules/
+cam-dict/
 config.json
