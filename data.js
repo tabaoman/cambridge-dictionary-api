@@ -46,24 +46,29 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
 
-app.get("/api/dictionary/:language/:entry", (req, res, next) => {
-  const b64 = req.query.hasOwnProperty('b') || req.query.hasOwnProperty('b64');
-  const entry = req.params.entry;
-  const slugLanguage = req.params.language;
-  let nation = "us";
+app.get("/api/suggest/:dict/:word", (req, res) => {
+  const word = req.params.word;
+  const url = `https://dictionary.cambridge.org/autocomplete/amp?dataset=${fn.dict(req.params.dict)}&q=${word}&__amp_source_origin=https%3A%2F%2Fdictionary.cambridge.org`;
+  request(url, async (error, resp, html) => {
+    if (error || resp.statusCode !== 200) return;
+    res.status(200).json(JSON.parse(html).map(w => w.word));
+  });
+});
 
-  if (slugLanguage === "en") {
-    language = "english";
-  } else if (slugLanguage === "uk") {
-    language = "english";
-    nation = "uk";
-  } else if (slugLanguage === "en-tw") {
-    language = "english-chinese-traditional";
-  } else if (slugLanguage === "en-cn") {
-    language = "english-chinese-simplified";
+app.get("/api/dictionary/:dict/:word", async (req, res, next) => {
+  const b64 = req.query.hasOwnProperty('b') || req.query.hasOwnProperty('b64');
+  const entry = req.params.word;
+  const lang = fn.dict(req.params.dict);
+  const dict = req.params.dict === "uk" ? "uk" : "us";
+
+  // Try cache
+  const cache = await fn.tryWordFile(dict, entry);
+  if (cache) {
+    res.status(200).json(fn.normResult(JSON.parse(cache), { b64 }));
+    return;
   }
 
-  const url = `https://dictionary.cambridge.org/${nation}/dictionary/${language}/${entry}`;
+  const url = `https://dictionary.cambridge.org/${dict}/dictionary/${lang}/${entry}`;
   request(url, async (error, response, html) => {
     if (!error && response.statusCode == 200) {
       const $ = cheerio.load(html);
@@ -103,7 +108,7 @@ app.get("/api/dictionary/:language/:entry", (req, res, next) => {
           if (!src) continue;
           const url = siteurl + $(src).attr('src');
           const pron = $(node.childNodes[2]).text();
-          audio.push({pos: p, lang: lang, url: b64 ? await fn.a2b64(url) : url, pron: pron});
+          audio.push({pos: p, lang: lang, base64: await fn.a2b64(url), url: url, pron: pron});
         }
       }
 
@@ -189,13 +194,15 @@ app.get("/api/dictionary/:language/:entry", (req, res, next) => {
           error: "word not found",
         });
       } else {
-        res.status(200).json({
+        const json = {
           word: word,
           pos: pos,
           verbs: verbs,
           pronunciation: audio,
           definition: definition,
-        });
+        };
+        fn.saveWord(dict, word, JSON.stringify(json))
+        res.status(200).json(fn.normResult(json, { b64 }));
       }
     }
   });

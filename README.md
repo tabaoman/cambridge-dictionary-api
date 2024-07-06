@@ -1,32 +1,42 @@
 # Cambridge Dictionary API
 
-A simple API for Cambridge Dictionary, built with Node.js.
+A simple API for [Cambridge Dictionary](https://dictionary.cambridge.org/), built with Node.js.
 
-## 🕹️ Manual
+## Manual
 
-### 📚️ dictionary
+### ⚠️ Before use
+1. Thank [Cambridge Dictionary](https://dictionary.cambridge.org/) nicely compiling the words.\
+The API entries contain language option, deciding which the dictionary database to use:
 
-api/dictionary/`{language}`/`{word}`
+    | option      | dictionary database         |
+    |-----------------------------|:---------------------------:|
+    | **`en`**    | English (US)                |
+    | **`uk`**    | English (UK)                |
+    | **`en-cn`** | English-Chinese-Simplified  |
+    | **`en-tw`** | English-Chinese-Traditional |
 
-#### **language option:**
+2. You have to remember to encode the query by yourself. A common use is:
+    ```javascript
+    encodeURIComponent(word)  // cook eggs -> cook%20eggs
+    ```
+3. By default, you will get some voice urls (ending with .mp3).\
+But sometimes you need the audio data.\
+You can append the api with `?b` ot `?b64` to get the base64 texts of the audios.\
+**⚠️ Note: base64 text will significantly increase the data size of the response.**
 
-| option      |         description         |
-| ----------- | :-------------------------: |
-| **`en`**    |        english (us)         |
-| **`uk`**    |        english (uk)         |
-| **`en-cn`** | english-chinese-simplified  |
-| **`en-tw`** | english-chinese-traditional |
+4. I have deployed a service you can use it for free ~~ right now :)\
+🔗 https://cam-dict.ping1service.top
 
-### 🔎 search
+4. This repository is built and changed based on Elias's [repo](https://github.com/chenelias/cambridge-dictionary-api)\
+ ❤️ Let's thank Elias!
 
-> [!NOTE]
-> have the problem with puppeteer running on vercel on search branch(but works fine on local env)
+### /api/dictionary/`{language}`/`{word}`
+Query a word with the specified dictionary
 
-**use `/` to test it with UI**
 
-## 🌐 Deploy
+### /api/suggest/`{language}`/`{word}`
+Get a suggested word list for a key word
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/chenelias/cambridge-dictionary-api/)
 
 ## 💻 Running Locally
 
@@ -39,7 +49,7 @@ npm install
 npm run dev
 ```
 
-Then fetch `http://localhost:3000/api/dictionary/english/hello` to test it
+Then fetch `http://localhost:3000/api/dictionary/en/hello` to test it
 or use / to test it out with UI.
 
 ## 📖 Example
@@ -59,38 +69,22 @@ or use / to test it out with UI.
       "type": "Third-person singular",
       "text": "cooks"
     },
-    {
-      "type": "Past tense",
-      "text": "cooked"
-    },
-    {
-      "type": "Past participle",
-      "text": "cooked"
-    },
-    {
-      "type": "Present participle",
-      "text": "cooking"
-    },
-    {
-      "type": "Singular",
-      "text": "cook"
-    },
-    {
-      "type": "Plural",
-      "text": "cooks"
-    }
+    ...
   ],
   "pronunciation": [
     {
-      "lang": "us",
-      "url": "https://dictionary.cambridge.org/us/media/english-chinese-traditional/us_pron/c/coo/cook_/cook.mp3",
-      "pron": "/kʊk/"
+      "pos": "verb",
+      "lang": "uk",
+      "url": "https://dictionary.cambridge.org/us/media/english-chinese-simplified/uk_pron/u/ukc/ukcon/ukconve028.mp3",
+      "url": "data:audio/mpeg;base64,AAAAA......"
     },
     {
-      "lang": "uk",
-      "url": "https://dictionary.cambridge.org/us/media/english-chinese-traditional/uk_pron/u/ukc/ukcon/ukconve028.mp3",
-      "pron": "/kʊk/"
-    }
+      "pos": "verb",
+      "lang": "us",
+      "url": "https://dictionary.cambridge.org/us/media/english-chinese-simplified/us_pron/c/coo/cook_/cook.mp3"
+      "url": "data:audio/mpeg;base64,AAAAA......"
+    },
+    ...
   ],
   "definition": [
     {
@@ -104,49 +98,30 @@ or use / to test it out with UI.
           "text": "I don't cook meat very often.",
           "translation": "我不常煮肉吃。"
         },
-        {
-          "id": 1,
-          "text": "He cooked us a huge dinner./He cooked a huge dinner for us.",
-          "translation": "他給我們準備了一頓豐盛的飯菜。"
-        },
-        {
-          "id": 2,
-          "text": "Let the fish cook for half an hour before you add the wine.",
-          "translation": "先把魚煮半個小時再加入酒。"
-        }
+        ...
       ]
     },
-    {
-      "id": 1,
-      "pos": "noun",
-      "text": "someone who prepares and cooks food",
-      "translation": "廚師",
-      "example": [
-        {
-          "id": 3,
-          "text": "She's a wonderful cook.",
-          "translation": "她是位很出色的廚師。"
-        }
-      ]
-    }
+    ...
   ]
 }
 ```
 
-/api/search/`wond` (search branch)
+/api/suggest/`en-cn`/`cook`
 
 ```json
-{
-  "suggestions": [
-    "wonder",
-    "wonder drug",
-    "wonderful",
-    "wonderfully",
-    "wonderland",
-    "wonderment",
-    "wonders never cease"
-  ]
-}
+[
+  "cook",
+  "Cook Islander",
+  "cook someone’s goose",
+  "cook something up",
+  "cook the books",
+  "cook up, dance up, talk up, etc. a storm",
+  "cookbook",
+  "cooked",
+  "cooked breakfast",
+  "cooked/done to a turn"
+]
 ```
 
-Develop by Elias ❤️
+Created by [Elias](https://github.com/chenelias) ❤️\
+Forked by [tabaoman](https://buymeacoffee.com/tabaoman) ☕️
