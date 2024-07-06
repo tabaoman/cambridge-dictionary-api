@@ -32,28 +32,41 @@
   <body>
     <h1>cambridge dictionary api</h1>
     <container class="pick">
-      <p>/api/dictionary/</p>
-      <select name="lang" id="lang" title="language">
+      <p>/api/suggest/</p>
+      <select name="lang" id="dict2" title="language">
         <option value="en">en</option>
         <option value="uk">uk</option>
         <option value="en-tw">en-tw</option>
         <option value="en-cn">en-cn</option>
       </select>
       <p>/</p>
-      <input
-        type="text"
-        name="word"
-        id="word"
-        title="word"
-        placeholder="enter the word"
-      />
-      <button onclick="Go()" type="submit">GO</button>
+      <input id="word2" type="text" name="word" title="word" placeholder="enter the word" />
+      <button onclick="sug()" type="submit">Suggest</button>
     </container>
+
+    <container class="pick">
+      <p>/api/dictionary/</p>
+      <select name="lang" id="dict1" title="language">
+        <option value="en">en</option>
+        <option value="uk">uk</option>
+        <option value="en-tw">en-tw</option>
+        <option value="en-cn">en-cn</option>
+      </select>
+      <p>/</p>
+      <input id="word1" type="text" name="word" title="word" placeholder="enter the word" />
+      <button onclick="lookup()" type="submit">Lookup</button>
+    </container>
+
     <script>
-      function Go() {
-        let lang = document.querySelector("#lang").value;
-        let word = document.querySelector("#word").value;
-        window.location.href = `/api/dictionary/${lang}/${word === "" ? "work" : word}`;
+      function sug() {
+        const lang = document.querySelector("#dict2").value || 'us';
+        const word = document.querySelector("#word2").value || 'work';
+        window.location.href = `/api/suggest/${lang}/${word}`;
+      }
+      function lookup() {
+        const lang = document.querySelector("#dict1").value || 'us';
+        const word = document.querySelector("#word1").value || 'work';
+        window.location.href = `/api/dictionary/${lang}/${word}`;
       }
     </script>
   </body>
