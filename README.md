@@ -2,13 +2,15 @@
 
 A simple API for [Cambridge Dictionary](https://dictionary.cambridge.org/), built with Node.js.
 
+<a href="https://www.buymeacoffee.com/tabaoman"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coke&emoji=😘&slug=tabaoman&button_colour=FFDD00&font_colour=ff0000&font_family=Cookie&outline_colour=ff0000&coffee_colour=000000" /></a>
+
 ## Manual
 
-### ⚠️ Before use
+### ⚠️ Before starting
 1. Thank [Cambridge Dictionary](https://dictionary.cambridge.org/) nicely compiling the words.\
-The API entries contain language option, deciding which the dictionary database to use:
+The API entries contain dictionary option, deciding which the dictionary database to use:
 
-    | option      | dictionary database         |
+    | Dictionary  | Database                    |
     |-------------|-----------------------------|
     | **`en`**    | English (US)                |
     | **`uk`**    | English (UK)                |
@@ -19,33 +21,32 @@ The API entries contain language option, deciding which the dictionary database 
     ```javascript
     encodeURIComponent('cook eggs')  // -> cook%20eggs
     ```
-3. By default, you will get some voice urls (ending with .mp3).\
+3. By default, you will get some pronunciation audios in url (ending with .mp3).\
 But sometimes you need the audio data.\
-You can append the api with `?b` ot `?b64` to get the base64 texts of the audios.\
+You can append the api with `?b` ot `?b64` to get the base64 texts instead of audio urls.\
 **⚠️ Note: base64 text will significantly increase the data size of the response.**
 
-4. I have deployed a service you can use it for free ~~ right now :)\
+4. I have deployed a service you can use it for free:\
 🔗 https://cam-dict.ping1service.top
 
-4. This repository is built and changed based on Elias's [repo](https://github.com/chenelias/cambridge-dictionary-api)\
+4. This repository is built and enhanced based on Elias's [work](https://github.com/chenelias/cambridge-dictionary-api)\
  ❤️ Let's thank Elias!
 
-### /api/dictionary/`{language}`/`{word}`
-Query a word with the specified dictionary
+### API Entries
+#### 1. Lookup a word within the specified dictionary
+```
+/api/dictionary/`{dictionary}`/`{word}`
+```
 
+#### 2. Get a suggested word list for a key word
+```
+/api/suggest/`{dictionary}`/`{word}`
+```
 
-### /api/suggest/`{language}`/`{word}`
-Get a suggested word list for a key word
-
-
-## 💻 Running Locally
-
-After clone this repository, run the following commands in the repository floder:
+## 💻 Self hosted
 
 ```bash
-# install dependencies
 npm install
-# run
 npm run dev
 ```
 
