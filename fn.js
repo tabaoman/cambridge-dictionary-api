@@ -30,12 +30,12 @@ const fn = {
     return res;
   },
   tryWordFile: async (dict, word) => {
-    let dir;
+    let dir = '/tmp/cam-dict';
     try {
       const config = require('./config.json');
       dir = config.filePath;
     } catch (err) {
-      dir = path.join(process.cwd(), 'cam-dict');
+      //dir = path.join(process.cwd(), 'cam-dict');
     }
     word = word.replace(/\s/, '_').replace(/\//, '|') + '.json';
     const p = path.join(dir, dict, word);
@@ -46,12 +46,12 @@ const fn = {
     }
   },
   saveWord: (dict, word, content) => {
-    let dir;
+    let dir = '/tmp/cam-dict';
     try {
       const config = require('./config.json');
       dir = config.filePath;
     } catch (err) {
-      dir = path.join(process.cwd(), 'cam-dict');
+      //dir = path.join(process.cwd(), 'cam-dict');
     }
     word = word.replace(/\s/, '_').replace(/\//, '|') + '.json';
     const p = path.join(dir, dict, word);
