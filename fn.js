@@ -23,9 +23,16 @@ const fn = {
   },
   normResult: (res, param) => {
     if (param && param.b64) {
-      res.pronunciation = res.pronunciation.map(p => ({ pos: p.pos, lang: p.lang, url: p.base64 }));
+      res.pronunciation = res.pronunciation.map(p => {
+        p.url = p.base64;
+        delete p.base64;
+        return p;
+      });
     } else {
-      res.pronunciation = res.pronunciation.map(p => ({ pos: p.pos, lang: p.lang, url: p.url }));
+      res.pronunciation = res.pronunciation.map(p => {
+        delete p.base64;
+        return p;
+      });
     }
     return res;
   },
