@@ -9,7 +9,7 @@ A simple API for [Cambridge Dictionary](https://dictionary.cambridge.org/), buil
 The API entries contain language option, deciding which the dictionary database to use:
 
     | option      | dictionary database         |
-    |-----------------------------|:---------------------------:|
+    |-------------|-----------------------------|
     | **`en`**    | English (US)                |
     | **`uk`**    | English (UK)                |
     | **`en-cn`** | English-Chinese-Simplified  |
@@ -17,7 +17,7 @@ The API entries contain language option, deciding which the dictionary database 
 
 2. You have to remember to encode the query by yourself. A common use is:
     ```javascript
-    encodeURIComponent(word)  // cook eggs -> cook%20eggs
+    encodeURIComponent('cook eggs')  // -> cook%20eggs
     ```
 3. By default, you will get some voice urls (ending with .mp3).\
 But sometimes you need the audio data.\
